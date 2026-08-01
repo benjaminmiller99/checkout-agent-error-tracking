@@ -20,13 +20,13 @@ Expected output:
 Checkout-agent step recorded for review.
 ```
 
-The sample action represents a reservation that cannot be completed. `run_step()` sends the error to `POST /v1/errors/capture`, then re-raises it so the agent loop can keep its ordinary control flow.
+The sample action represents a reservation that cannot be completed. `run_step()` sends the error to `POST /v1/errors/capture`, then re-raises it so the agent loop can keep its ordinary control flow. The runnable demo deletes its captured error group before exiting, so trying it does not leave an error record in your project.
 
 ## What to copy
 
 Use `run_step(order_id, step, action)` around each action that changes the state of an order. Its fingerprint uses the agent name and step, so repeated inventory reservations are collected together while an address-verification problem remains separate. The capture also includes the order identifier and the Python traceback for the review context.
 
-The capture payload contains an `idempotency_key` derived from the order and step. A rate-limit response pauses with exponential retry timing and honors `Retry-After`; repeating the same capture therefore represents the same agent step.
+Each capture includes a fresh `idempotency_key`, allowing request retries to remain safe without treating a later failure at the same order step as the earlier event. A rate-limit response pauses with exponential retry timing and honors `Retry-After`.
 
 The example deliberately stays at the loop boundary. Replace `reserve_inventory` with calls to your catalog, cart, or fulfillment code, keeping the wrapper at each agent action where a failure needs a record.
 
