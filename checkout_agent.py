@@ -1,7 +1,7 @@
 """Capture failures that occur while an e-commerce agent prepares an order."""
 
-import hashlib
 import traceback
+import uuid
 from collections.abc import Callable
 from typing import Any
 
@@ -13,7 +13,6 @@ def run_step(order_id: str, step: str, action: Callable[[], Any]) -> Any:
     try:
         return action()
     except Exception as exc:
-        stable_id = hashlib.sha256(f"{order_id}:{step}".encode()).hexdigest()
         infrai.errors.capture(
             title=f"checkout-agent/{step}",
             message=str(exc),
@@ -21,7 +20,7 @@ def run_step(order_id: str, step: str, action: Callable[[], Any]) -> Any:
             level="error",
             fingerprint=["checkout-agent", step],
             context={"order_id": order_id, "step": step},
-            idempotency_key=stable_id,
+            idempotency_key=str(uuid.uuid4()),
         )
         raise
 
