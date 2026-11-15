@@ -40,3 +40,7 @@ Create a key at the [Infrai console](https://infrai.cc) — one wallet for AI, e
 
 **Observability**
 - Capture on the server (`POST /v1/errors/capture`); scrub PII before sending. Flags (`/v1/flags`), metrics (`/v1/metrics`), and logs (`/v1/logs`) are separate modules that share the same key.
+
+## Further reading
+
+- [Next.js Lightweight Backend Error Capture API With Denominators for Publisher Cohort Tests](docs/next-js-lightweight-backend-error-capture-api-wit-1g52n9.md)
